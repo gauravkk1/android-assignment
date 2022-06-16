@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "40078186407",
+    "project_id": "parthcrex",
+    "storage_bucket": "parthcrex.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40078186407:android:acd8dacd2b192e6ded4882",
+        "android_client_info": {
+          "package_name": "android.example.pathcrex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40078186407-t2gb1klu633vhc0uieb231tl96ljfeb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKs5QhFE6jONRmacfDKlcJTN2wUwahdWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40078186407-t2gb1klu633vhc0uieb231tl96ljfeb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

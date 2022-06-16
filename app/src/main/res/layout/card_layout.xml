@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="10sp"
+        app:cardElevation="20sp"
+        android:layout_margin="5sp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        android:background="#15222E"
+        app:layout_constraintTop_toTopOf="parent" >
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="vertical"
+            android:background="#15222E"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_marginTop="12sp"
+                android:id="@+id/cardHeading"
+                android:layout_marginLeft="20sp"
+                android:layout_width="wrap_content"
+                android:textColor="#9FA3A7"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/euclid_light"
+                android:textSize="13sp"
+                android:text="25th T20 at Sarjah International Ground">
+
+            </TextView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100sp">
+                <LinearLayout
+                    android:layout_weight="20"
+                    android:layout_marginLeft="16sp"
+                    android:layout_marginTop="15sp"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="100sp" >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="50"
+                        >
+                        <ImageView
+                            android:layout_marginLeft="16sp"
+                            android:id="@+id/team1Flag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/image_dc" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/team1Name"
+                            android:text="Delhi Capitals"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/euclid_semibold"
+                            android:textSize="15sp"
+                            android:layout_margin="10sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="50"
+                        >
+                        <ImageView
+                            android:layout_marginLeft="16sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/team2Flag"
+                            android:background="@drawable/image_dc" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chennai Super Kings"
+                            android:id="@+id/team2Name"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/euclid_semibold"
+                            android:textSize="15sp"
+                            android:layout_margin="10sp" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="40">
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:background="#24303D"
+
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25sp"
+                        android:layout_marginTop="30sp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="7:30 PM"
+                            android:fontFamily="@font/euclid_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/matchTime"
+
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5 June"
+                            android:fontFamily="@font/euclid_semibold"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="17sp"
+                            android:id="@+id/matchDate"
+                            android:textSize="19sp" />
+
+
+
+                    </RelativeLayout>
+
+
+
+
+
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#24303D"
+                android:layout_marginTop="5sp"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:id="@+id/tv_horizonalLine"
+                />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                >
+
+                <TextView
+                    android:layout_width="44sp"
+                    android:layout_height="24sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginRight="95sp"
+                    android:textSize="14sp"
+                    android:background="@drawable/rounded_corner_1"
+                    android:paddingStart="11sp"
+                    android:paddingTop="3sp"
+                    android:id="@+id/tv_rateTeam2"
+
+                    android:text="DC"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:layout_width="30sp"
+                    android:layout_height="24sp"
+                    android:background="@drawable/rounded_corner_2"
+                    android:paddingStart="6sp"
+                    android:paddingTop="1sp"
+                    android:textSize="18sp"
+                    android:text="98"
+                    android:fontFamily="@font/rajsb"
+                    android:layout_marginRight="57sp"
+                    android:layout_marginTop="2sp"
+                    android:textColor="@color/white"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/tv_rate2"
+                    />
+                <TextView
+                    android:layout_width="30sp"
+                    android:layout_height="24sp"
+                    android:text="99"
+                    android:paddingTop="1sp"
+                    android:paddingStart="6sp"
+                    android:background="@drawable/rounded_corner_3"
+                    android:fontFamily="@font/rajsb"
+                    android:textSize="18sp"
+                    android:layout_marginRight="20sp"
+                    android:layout_marginTop="2sp"
+                    android:textColor="@color/white"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/tv_rate3"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    />
+
+
+            </RelativeLayout>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
