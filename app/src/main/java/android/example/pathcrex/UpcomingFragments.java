@@ -42,6 +42,11 @@ public class UpcomingFragments extends Fragment {
     private RequestQueue mRequestQueue;
     private UpcomingAdapter upcomingAdapter;
 
+    UpcomingFragments(ArrayList<UpcomingMatchDetailModel> models){
+        this.getModels = models;
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,7 +64,11 @@ public class UpcomingFragments extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setHasFixedSize(true);
 
-        fetchJsonData();
+        upcomingAdapter = new UpcomingAdapter( getModels);
+        recyclerView.setAdapter(upcomingAdapter);
+        upcomingAdapter.notifyDataSetChanged();
+
+       // fetchJsonData();
     }
 
     public void fetchJsonData(){

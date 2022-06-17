@@ -39,6 +39,10 @@ public class FinishedFragments extends Fragment {
 
     private RequestQueue mRequestQueue;
 
+    FinishedFragments(ArrayList<FinishedMatchDetailModel> models){
+        this.matchesDetails = models;
+    }
+
 
 
 
@@ -67,7 +71,12 @@ public class FinishedFragments extends Fragment {
 
         mRequestQueue = Volley.newRequestQueue(requireContext());
 
-        fetchJsonData();
+        finishedAdapter = new FinishedAdapter(matchesDetails);
+        recyclerView.setAdapter(finishedAdapter);
+        finishedAdapter.notifyDataSetChanged();
+
+
+        //fetchJsonData();
 
     }
 

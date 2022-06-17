@@ -86,12 +86,8 @@ public class FinishedAdapter extends RecyclerView.Adapter<FinishedAdapter.ViewHo
         if(position== matchDetails.size())
         {
             holder.tv_finished_matches.setText("All Finished Matches");
-            holder.cl_layout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Log.d(TAG, "onClick pressed ");
-                    Toast.makeText(v.getContext(), "Open All Finished Matches",Toast.LENGTH_SHORT).show();
-                }
+            holder.cl_layout.setOnClickListener(v -> {
+                Toast.makeText(v.getContext(), "Open All Finished matches", Toast.LENGTH_SHORT).show();
             });
         }
         else if(matchDetails.get(position).getViewType()==LayoutOne)
@@ -153,7 +149,7 @@ public class FinishedAdapter extends RecyclerView.Adapter<FinishedAdapter.ViewHo
            result = itemView.findViewById(R.id.tv_result_finished);
            dateHeading = itemView.findViewById(R.id.tv_matchDate);
            tv_finished_matches = itemView.findViewById(R.id.tv_upcoming_finished);
-           cl_layout = itemView.findViewById(R.id.cl_layout_finished);
+           cl_layout = itemView.findViewById(R.id.cl_layout);
 
 
        }
@@ -188,7 +184,7 @@ public class FinishedAdapter extends RecyclerView.Adapter<FinishedAdapter.ViewHo
         }
 
         String day;
-        switch (calendar.get(Calendar.DAY_OF_MONTH))
+        switch (calendar.get(Calendar.DAY_OF_WEEK))
         {
             case 1 :
                 day = "Sun";

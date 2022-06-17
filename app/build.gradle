@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -43,5 +44,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
 
     implementation 'joda-time:joda-time:2.9.9'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
 
 }

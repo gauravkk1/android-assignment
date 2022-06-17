@@ -233,7 +233,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
         }
 
         String day;
-        switch (calendar.get(Calendar.DAY_OF_MONTH))
+        switch (calendar.get(Calendar.DAY_OF_WEEK))
         {
             case 1 :
                 day = "Sun";
