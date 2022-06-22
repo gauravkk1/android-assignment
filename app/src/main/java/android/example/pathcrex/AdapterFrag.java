@@ -10,15 +10,16 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdapterFrag extends FragmentStateAdapter {
 
-    ArrayList<UpcomingMatchDetailModel> upcoming;
+    List<UpcomingMatchDetailModel> upcoming;
     ArrayList<FinishedMatchDetailModel> finished;
 
 
 
-    public AdapterFrag(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, ArrayList<UpcomingMatchDetailModel> upcoming, ArrayList<FinishedMatchDetailModel> finished) {
+    public AdapterFrag(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, List<UpcomingMatchDetailModel> upcoming, ArrayList<FinishedMatchDetailModel> finished) {
         super(fragmentManager, lifecycle);
         this.upcoming = upcoming;
         this.finished = finished;

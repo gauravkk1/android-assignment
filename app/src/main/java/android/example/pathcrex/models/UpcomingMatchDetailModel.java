@@ -8,6 +8,7 @@ public class UpcomingMatchDetailModel {
     String rate1, rate2,rateTeam;
     String t;
     String clubDate;
+    long timeStamp;
 
     private int viewType;
     private int odds;
@@ -28,7 +29,7 @@ public class UpcomingMatchDetailModel {
         this.odds = odds;
     }
 
-    public UpcomingMatchDetailModel(String t1, String t2, String t1Flag, String t2Flag, String matchNo, String date, String rate1, String rate2, String rateTeam, String t, int viewType, int odds) {
+    public UpcomingMatchDetailModel(String clubDate, String t1, String t2, String t1Flag, String t2Flag, String matchNo, String date, String rate1, String rate2, String rateTeam, String t, int viewType, int odds, long timeStamp) {
         this.t1 = t1;
         this.t2 = t2;
         this.t1Flag = t1Flag;
@@ -41,9 +42,11 @@ public class UpcomingMatchDetailModel {
         this.t =  t;
         this.viewType = viewType;
         this.odds = odds;
+        this.clubDate = clubDate;
+        this.timeStamp = timeStamp;
     }
 
-    public UpcomingMatchDetailModel(String t1, String t2, String t1Flag, String t2Flag, String matchNo, String date, String t, int viewType, int odds) {
+    public UpcomingMatchDetailModel(String clubDate, String t1, String t2, String t1Flag, String t2Flag, String matchNo, String date, String t, int viewType, int odds, long timeStamp) {
         this.t1 = t1;
         this.t2 = t2;
         this.t1Flag = t1Flag;
@@ -53,6 +56,16 @@ public class UpcomingMatchDetailModel {
         this.t = t;
         this.viewType = viewType;
         this.odds = odds;
+        this.timeStamp = timeStamp;
+        this.clubDate = clubDate;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public UpcomingMatchDetailModel(int viewType, int odds) {
@@ -151,6 +164,14 @@ public class UpcomingMatchDetailModel {
 
     public void setClubDate(String clubDate) {
         this.clubDate = clubDate;
+    }
+
+    public boolean hasClubDate() {
+        return this.clubDate != null;
+    }
+
+    public boolean hasDate(){
+        return this.date != null;
     }
 
 

@@ -30,6 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class UpcomingFragments extends Fragment {
@@ -38,11 +41,14 @@ public class UpcomingFragments extends Fragment {
     public static final String TAG = "Upcominggg";
 
     private RecyclerView recyclerView;
-    private ArrayList<UpcomingMatchDetailModel> getModels = new ArrayList<>();
+    private List<UpcomingMatchDetailModel> getModels = new ArrayList<>();
     private RequestQueue mRequestQueue;
     private UpcomingAdapter upcomingAdapter;
+    private Timer timer;
+    private TimerTask timerTask;
 
-    UpcomingFragments(ArrayList<UpcomingMatchDetailModel> models){
+
+    UpcomingFragments(List<UpcomingMatchDetailModel> models){
         this.getModels = models;
 
     }
@@ -66,9 +72,51 @@ public class UpcomingFragments extends Fragment {
 
         upcomingAdapter = new UpcomingAdapter( getModels);
         recyclerView.setAdapter(upcomingAdapter);
-        upcomingAdapter.notifyDataSetChanged();
+        setTimer();
+
+
+
+
+
+
+
+
 
        // fetchJsonData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(timer != null){
+            timer.cancel();
+            timer.purge();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTimer();
+    }
+
+    public void setTimer(){
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> {
+
+                    upcomingAdapter.notifyDataSetChanged();
+                    Date dt = new Date();
+                    long milli = dt.getTime();
+
+                    Log.d(TAG, "run: We are running " + milli);
+                });
+            }
+        };
+
+        timer.schedule(timerTask, 1, 1000);
     }
 
     public void fetchJsonData(){
@@ -104,9 +152,9 @@ public class UpcomingFragments extends Fragment {
                                 String rate2 = odds.getString("rate2");
                                 String rate_team = odds.getString("rate_team");
                                 Log.d(TAG, "onResponse: " + rate + " " + rate2 + " " + rate_team);
-                                getModels.add(new UpcomingMatchDetailModel( t1, t2, t1flag, t2flag, match_no, getDate(date), time_in_AM_PM(Long.parseLong((time_stamp))), rate, rate2, rate_team,1,1));
+                                getModels.add(new UpcomingMatchDetailModel( club_date,t1, t2, t1flag, t2flag, match_no, getDate(date), time_in_AM_PM(Long.parseLong((time_stamp))), rate, rate2, rate_team,1,1, Long.parseLong(time_stamp)));
                             } else {
-                                getModels.add(new UpcomingMatchDetailModel(t1, t2, t1flag, t2flag, match_no, getDate(date), time_in_AM_PM(Long.parseLong((time_stamp))),1,0));
+                                getModels.add(new UpcomingMatchDetailModel(club_date,t1, t2, t1flag, t2flag, match_no, getDate(date), time_in_AM_PM(Long.parseLong((time_stamp))),1,0, Long.parseLong(time_stamp)));
                             }
                         }
 
@@ -153,6 +201,8 @@ public class UpcomingFragments extends Fragment {
         String time1 = sdf.format(dt);
         return time1;
     }
+
+
 
 
 

@@ -12,4 +12,5 @@
     <color name="card_country">#CFD1D3</color>
     <color name="stroke_color">#24303D</color>
     <color name="winning_result">#D6D056</color>
+    <color name="timer_color">#EAAE54</color>
 </resources>

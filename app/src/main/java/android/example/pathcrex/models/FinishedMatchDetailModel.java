@@ -13,6 +13,8 @@ public class FinishedMatchDetailModel {
      String result;
 
 
+
+
      public FinishedMatchDetailModel(String team1, String team2, String t1Flag, String t2Flag, String score1, String score2, String overs1, String overs2, String winner, String matchNo, String date, int viewType, String t, String result) {
           this.team1 = team1;
           this.team2 = team2;

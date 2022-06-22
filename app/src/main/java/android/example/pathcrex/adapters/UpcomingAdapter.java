@@ -1,7 +1,10 @@
 package android.example.pathcrex.adapters;
 
+import android.annotation.SuppressLint;
 import android.example.pathcrex.R;
 import android.example.pathcrex.models.UpcomingMatchDetailModel;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,23 +25,28 @@ import org.joda.time.Days;
 import org.w3c.dom.Text;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHolder> {
 
-    private final ArrayList<UpcomingMatchDetailModel> matchDetails;
+    private final List<UpcomingMatchDetailModel> matchDetails;
     private static final int LayoutOne = 0;
     private static final int LayoutTwo = 1;
     private static final int LayoutThree = 2;
+    private final String TAG = "Timer analysis";
 
 
-    public UpcomingAdapter( ArrayList<UpcomingMatchDetailModel> matchDetails) {
+    public UpcomingAdapter( List<UpcomingMatchDetailModel> matchDetails) {
         this.matchDetails = matchDetails;
     }
 
@@ -96,36 +104,43 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             holder.team1Name.setText(matchDetails.get(position).getT1());
             holder.team2Name.setText(matchDetails.get(position).getT2());
             String time = (matchDetails.get(position)).getT();
+            String date = (matchDetails.get(position)).getDate();
+            long timeStamp = (matchDetails.get(position)).getTimeStamp();
+            Date dt = new Date();
+            long mili = System.currentTimeMillis();
+
+            Log.d(TAG, "onBindViewHolder: time stamp "+ timeStamp);
 //            Log.d("ddd", "onBindViewHolder: " + matchDetails.get(position).getT());
-            try {
-                if(checkWhetherTimeWithinThreeHours(time)) {
+            boolean res = false;
+
+
+           // Log.d(TAG, "onBindViewHolder: checking less than 3 "+ checkWhetherTimeWithinThreeHours(timeStamp));
+
+                if(checkWhetherTimeWithinThreeHours(timeStamp, date)) {
+
 //                    Log.d("ddd", "onBindViewHolder: "+"sssssssss");
                     holder.matchTime.setText("Starting in: ");
-                    long tempTime = Long.parseLong(matchDetails.get(position).getDate());
+                   // long tempTime = Long.parseLong(matchDetails.get(position).getDate());
+                    long rem = timeStamp - mili;
 
-                    CountDownTimer countDownTimer = new CountDownTimer(tempTime, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            String hms = String.format("%02d:%02d:%02d",
-                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
-                            holder.matchDate.setText(hms);
+                    String hm = String.format("%02d:%02d:%02d",
+                            TimeUnit.MILLISECONDS.toHours(rem),
+                            TimeUnit.MILLISECONDS.toMinutes(rem) - TimeUnit.HOURS.toMinutes(
+                                    TimeUnit.MILLISECONDS.toHours(rem)),
+                            TimeUnit.MILLISECONDS.toSeconds(rem) - TimeUnit.MINUTES.toSeconds(
+                                    TimeUnit.MILLISECONDS.toMinutes(rem)));
 
-                        }
+                    holder.matchDate.setText(hm);
+                  //  holder.matchDate.setTextColor(getResources().getColor(R.color.errorColor, null));
 
-                        @Override
-                        public void onFinish() {
-                            holder.matchDate.setText("TIME'S UP");
-                        }
-                    }.start();
-                }else {
-                    Log.d("dddd", "onBindViewHolder       : " + matchDetails.get(position).getT());
+
+
+                } else {
+                    Log.d("dddd", "onBindViewHolder       : " + matchDetails.get(position).getDate());
                     holder.matchTime.setText(matchDetails.get(position).getT());
-                    holder.matchDate.setText(matchDetails.get(position).getDate());
+                    holder.matchDate.setText(get_day_month(matchDetails.get(position).getClubDate()));
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+
 
             Glide.with(holder.team1Flag.getContext()).load(matchDetails.get(position).getT1Flag()).into(holder.team1Flag);
             Glide.with(holder.team2Flag.getContext()).load(matchDetails.get(position).getT2Flag()).into(holder.team2Flag);
@@ -154,6 +169,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
 
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -202,6 +218,24 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
 
 
 
+    }
+    public static String get_day_month(String dateStr) {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat TIME_FORMAT = new SimpleDateFormat(" 'at' h:mm aa");
+
+        SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
+
+        Calendar calendar = Calendar.getInstance();
+
+        try {
+            calendar.setTime(Objects.requireNonNull(curFormater.parse(dateStr)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String date = DATE_FORMAT.format(calendar.getTime());
+
+        return date;
     }
 
     public String getDayAndMonth(String dateStr) throws ParseException {
@@ -263,10 +297,30 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
 
     }
 
-    private boolean checkWhetherTimeWithinThreeHours(String timeStr) throws ParseException {
-        DateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
-        Date date = (Date)formatter.parse(timeStr);
+    private boolean checkWhetherTimeWithinThreeHours(long timeStamp, String dateStr) {
+
         long DAY = 3 * 60 * 60 * 1000;
-        return date.getTime() > System.currentTimeMillis() - DAY;
+        SimpleDateFormat jdf = new SimpleDateFormat("MM/DD/yyyy");
+
+        Date dt = new Date();
+
+
+        long timeStampNow = dt.getTime();
+        String javaDate = jdf.format(timeStampNow);
+       // if(dateStr.compareTo(javaDate) != 0) return false;
+
+
+        long diffInHours = (timeStamp - timeStampNow) / (1000* 60 * 60);
+        if(diffInHours < 0) return false;
+        return diffInHours < 3;
+    }
+
+    private String giveDateString(long milli){
+        Date dt = new Date(milli / 1000);
+        SimpleDateFormat jdf = new SimpleDateFormat("MM/DD/yyyy");
+
+        String java_date = jdf.format(dt);
+
+        return java_date;
     }
 }

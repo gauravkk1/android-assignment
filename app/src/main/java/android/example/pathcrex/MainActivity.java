@@ -19,12 +19,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.internal.Constants;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +39,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -46,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
-    private ArrayList<UpcomingMatchDetailModel> upcomingList;
+    private ArrayList<UpcomingMatchDetailModel> upcomingList = new ArrayList<>();
 
-    private ArrayList<FinishedMatchDetailModel> finishedList;
+    private ArrayList<FinishedMatchDetailModel> finishedList = new ArrayList<>();
     private JSONArray upcomingApiResponse;
     //private ArrayList<MatchDetailModel> upcoming;
 
@@ -57,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String, ArrayList<UpcomingMatchDetailModel>> upcomingMatchesMap;
     private HashMap<String, ArrayList<FinishedMatchDetailModel>> finishedMatchesMap;
     private String TAG = "MainActivity";
+    private FirebaseFirestore db;
+
 
 
 
@@ -68,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseDatabase =  FirebaseDatabase.getInstance("https://parthcrex-default-rtdb.firebaseio.com");
         databaseReference = firebaseDatabase.getReference("matchDetails");
+
+        db = FirebaseFirestore.getInstance();
+
 
         getData();
 
@@ -141,12 +154,55 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void addDataToFirebase(){
+        CollectionReference matchDetails = db.collection("matchDetails");
+        for(UpcomingMatchDetailModel upcomingMatch : upcomingList){
+            if(upcomingMatch.getT1Flag() != null) {
+                matchDetails.add(upcomingMatch)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "onSuccess: Upcoming  match details are added");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Some error came while adding upcoming match" + e.toString());
+                            }
+                        });
+            }
+        }
+
+        for(FinishedMatchDetailModel finishedMatch : finishedList){
+            if(finishedMatch.getT1Flag() != null) {
+                matchDetails.add(finishedMatch)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "onSuccess: Finished match details are added");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Some error came while adding finished match");
+                            }
+                        });
+            }
+        }
+
+
+    }
+
     private void getData(){
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange: changeddddd");
-
+// clear previous array
+                upcomingList.clear();
+                finishedList.clear();
                     upcomingMatchesMap = new HashMap<>();
                     finishedMatchesMap = new HashMap<>();
                     //MainActivity.Constants = new MainActivity.Constants();
@@ -171,11 +227,8 @@ public class MainActivity extends AppCompatActivity {
                             String score2 = ds.child("score2").getValue().toString();
 
                             FinishedMatchDetailModel matchDetail = null;
-                            try {
-                                matchDetail = new FinishedMatchDetailModel(t1, t2, t1_flag, t2_flag, score1, score2, overs1, overs2, winner, match_no, getDate(date), 1,time_in_AM_PM( time_stamp), result);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            matchDetail = new FinishedMatchDetailModel(t1, t2, t1_flag, t2_flag, score1, score2, overs1, overs2, winner, match_no, getDate(date), 1,time_in_AM_PM( time_stamp), result);
+
 
                             if(finishedMatchesMap.get(clubDate) == null){
                                 finishedMatchesMap.put(clubDate, new ArrayList<>());
@@ -200,7 +253,14 @@ public class MainActivity extends AppCompatActivity {
                                 String rate2 = ds.child("odds").child("rate2").getValue().toString();
                                 String rateTeam = ds.child("odds").child("rate_team").getValue().toString();
 
-                                UpcomingMatchDetailModel matchDetail = new UpcomingMatchDetailModel(t1, t2, t1_flag, t2_flag, match_no, date, rate1, rate2 , rateTeam,time_in_AM_PM( time_stamp), 1, 1);
+                                long epochTime = 0;
+                                try {
+                                    epochTime = giveEpocTime(clubDate);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                UpcomingMatchDetailModel matchDetail = new UpcomingMatchDetailModel(clubDate ,t1, t2, t1_flag, t2_flag, match_no, date, rate1, rate2 , rateTeam,time_in_AM_PM( time_stamp), 1, 1, Long.parseLong(time_stamp));
                                 if(upcomingMatchesMap.get(clubDate) == null){
                                     upcomingMatchesMap.put(clubDate, new ArrayList<>());
 
@@ -211,11 +271,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                             else {
                                 UpcomingMatchDetailModel matchDetail = null;
-                                try {
-                                    matchDetail = new UpcomingMatchDetailModel(t1, t2, t1_flag, t2_flag, match_no,getDate( date) ,time_in_AM_PM( time_stamp), 1, 0);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
+                                matchDetail = new UpcomingMatchDetailModel(clubDate, t1, t2, t1_flag, t2_flag, match_no,getDate( date) ,time_in_AM_PM( time_stamp), 1, 0, Long.parseLong(time_stamp));
+
                                 if(upcomingMatchesMap.get(clubDate) == null){
                                     upcomingMatchesMap.put(clubDate, new ArrayList<>());
 
@@ -230,12 +287,13 @@ public class MainActivity extends AppCompatActivity {
                             upcomingList = new ArrayList<>();
                             finishedList = new ArrayList<>();
 
-                            for(String day : upcomingMatchesMap.keySet()){
-                                ArrayList<UpcomingMatchDetailModel > newModels = upcomingMatchesMap.get(day);
-                                upcomingList.add(new UpcomingMatchDetailModel(day,0));
+                            for(String key : upcomingMatchesMap.keySet()){
+                                ArrayList<UpcomingMatchDetailModel > newModels = upcomingMatchesMap.get(key);
+                                upcomingList.add(new UpcomingMatchDetailModel(key ,0));
                                 for(int i = 0; i < Objects.requireNonNull(newModels).size(); i++){
                                     upcomingList.add(newModels.get(i));
                                 }
+
                             }
 
                             for(String key : finishedMatchesMap.keySet()){
@@ -245,6 +303,10 @@ public class MainActivity extends AppCompatActivity {
                                     finishedList.add(newModels.get(i));
                                 }
                             }
+
+                            //addDataToFirebase();
+
+
 
                             init();
 
@@ -262,11 +324,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getDate(String date) throws ParseException {
+    private String getDate(String date) {
 
         SimpleDateFormat df = new SimpleDateFormat("MM/DD/yyyy");
 
-        Date readDate = df.parse(date);
+        Date readDate = null;
+        try {
+            readDate = df.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(readDate.getTime());
 
@@ -290,4 +357,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private long giveEpocTime(String dateStr) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("MM/DD/yyyy");
+
+        Date readDate = df.parse(dateStr);
+        return readDate.getTime();
+    }
+
+    private String giveDateString(long milli){
+        Date dt = new Date(milli / 1000);
+        SimpleDateFormat jdf = new SimpleDateFormat("MM/DD/yyyy");
+
+        String java_date = jdf.format(dt);
+
+        return java_date;
+    }
+
 }
+
+class SetHelper implements Comparator<UpcomingMatchDetailModel> {
+
+    @Override
+    public int compare(UpcomingMatchDetailModel o1, UpcomingMatchDetailModel o2) {
+        if(o1.getTimeStamp() > o2.getTimeStamp()) return -1;
+        return 1;
+    }
+}
+
